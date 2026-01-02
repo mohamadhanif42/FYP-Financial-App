@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
   LayoutDashboard, 
   Camera, 
@@ -19,20 +19,19 @@ import {
 } from 'lucide-react';
 
 /**
- * CONSTANTS
+ * SmartDuit Sarawak - Local-First Prototype
+ * This version uses React State for data persistence (Session-based).
+ * No Firebase configuration required for this build.
  */
+
 const SESCO_RATES = [
   { limit: 100, rate: 0.265 }, 
   { limit: 300, rate: 0.334 }, 
   { limit: Infinity, rate: 0.445 } 
 ];
 
-// Dynamic Month Label
 const CURRENT_MONTH = new Intl.DateTimeFormat('en-US', { month: 'long' }).format(new Date());
 
-/**
- * MINI CHART COMPONENT
- */
 const DonutChart = ({ data }) => {
   const total = data.reduce((acc, item) => acc + item.value, 0);
   let cumulativePercent = 0;
@@ -76,16 +75,10 @@ const DonutChart = ({ data }) => {
 export default function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [transactions, setTransactions] = useState([]);
-  
-  // OCR Simulation States
-  const [scanStep, setScanStep] = useState(0); // 0: Idle, 1: Loading, 2: Result
+  const [scanStep, setScanStep] = useState(0); 
   const [ocrData, setOcrData] = useState(null);
-  
-  // Modal States
   const [showManualModal, setShowManualModal] = useState(false);
   const [showClearConfirm, setShowClearConfirm] = useState(false);
-  
-  // Form States
   const [manualAmount, setManualAmount] = useState('');
   const [manualCategory, setManualCategory] = useState('Food');
   const [usage, setUsage] = useState('');
@@ -93,7 +86,6 @@ export default function App() {
 
   const totalSpent = transactions.reduce((acc, curr) => acc + curr.amount, 0);
 
-  // Group data for the chart
   const chartData = [
     { label: 'Food', value: transactions.filter(t => t.category === 'Food').reduce((a, b) => a + b.amount, 0), color: '#6366f1' },
     { label: 'Transport', value: transactions.filter(t => t.category === 'Transport').reduce((a, b) => a + b.amount, 0), color: '#8b5cf6' },
@@ -101,13 +93,8 @@ export default function App() {
     { label: 'Other', value: transactions.filter(t => t.category === 'Other').reduce((a, b) => a + b.amount, 0), color: '#94a3b8' },
   ].filter(item => item.value > 0);
 
-  /**
-   * FEATURE: OCR SIMULATION
-   * Replaces real API calls for now.
-   */
   const handleStartScan = () => {
     setScanStep(1);
-    // Simulate Processing Delay
     setTimeout(() => {
       setOcrData({
         amount: (Math.random() * 80 + 5).toFixed(2),
@@ -165,157 +152,92 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans pb-28 select-none">
-      {/* Header */}
       <header className="bg-white border-b px-6 py-4 flex justify-between items-center sticky top-0 z-10">
         <div>
           <h1 className="text-xl font-black text-indigo-600 tracking-tight italic underline decoration-indigo-200">SmartDuit</h1>
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Sarawak Local Assistant</p>
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest text-left">Sarawak Local Assistant</p>
         </div>
         <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-slate-400">DEMO</span>
-            <div className="w-9 h-9 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold border-2 border-white shadow-sm">
-                JS
-            </div>
+            <span className="text-xs font-bold text-slate-400">PROTOTYPE</span>
+            <div className="w-9 h-9 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold border-2 border-white shadow-sm">JS</div>
         </div>
       </header>
 
       <main className="max-w-md mx-auto p-4">
         {activeTab === 'dashboard' && (
-          <div className="space-y-6 animate-in fade-in duration-500">
-            {/* Balance Card */}
-            <div 
-              onClick={() => setActiveTab('history')}
-              className="bg-indigo-600 rounded-[2rem] p-7 text-white shadow-2xl shadow-indigo-200 relative overflow-hidden cursor-pointer hover:bg-indigo-700 active:scale-95 transition-all group"
-            >
-              <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
-                <Wallet size={120} />
-              </div>
-              <p className="text-indigo-100 text-sm mb-1 font-medium flex items-center gap-1 opacity-80">
-                Total Expenses ({CURRENT_MONTH})
-                <ChevronRight size={14} />
-              </p>
-              <h2 className="text-4xl font-black mb-4 tracking-tight">RM {totalSpent.toFixed(2)}</h2>
-              <div className="bg-white/10 backdrop-blur-md inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/20">
-                <TrendingUp size={14} />
-                <span className="text-[11px] font-bold">Tap to view history</span>
-              </div>
+          <div className="space-y-6">
+            <div onClick={() => setActiveTab('history')} className="bg-indigo-600 rounded-[2rem] p-7 text-white shadow-2xl shadow-indigo-200 relative overflow-hidden cursor-pointer hover:bg-indigo-70Group active:scale-95 transition-all group">
+              <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform"><Wallet size={120} /></div>
+              <p className="text-indigo-100 text-sm mb-1 font-medium flex items-center gap-1 opacity-80 text-left">Total Expenses ({CURRENT_MONTH}) <ChevronRight size={14} /></p>
+              <h2 className="text-4xl font-black mb-4 tracking-tight text-left">RM {totalSpent.toFixed(2)}</h2>
+              <div className="bg-white/10 backdrop-blur-md inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/20"><TrendingUp size={14} /><span className="text-[11px] font-bold">Tap to view history</span></div>
             </div>
 
-            {/* Spending Breakdown (Google Charts Mock) */}
             <div className="bg-white p-6 rounded-[2rem] border shadow-sm border-slate-100">
-              <div className="flex justify-between items-center mb-5">
-                <h3 className="font-extrabold text-sm text-slate-500 uppercase tracking-wider">Analysis</h3>
-                <PieChart size={18} className="text-indigo-400" />
-              </div>
+              <div className="flex justify-between items-center mb-5"><h3 className="font-extrabold text-sm text-slate-500 uppercase tracking-wider">Analysis</h3><PieChart size={18} className="text-indigo-400" /></div>
               <div className="flex items-center gap-8">
                 <DonutChart data={chartData} />
                 <div className="flex-1 space-y-3">
-                  {chartData.length > 0 ? (
-                    chartData.map((item, idx) => (
-                      <div key={idx} className="flex items-center justify-between text-xs">
-                        <div className="flex items-center gap-2">
-                          <div className="w-2.5 h-2.5 rounded-full shadow-inner" style={{ backgroundColor: item.color }}></div>
-                          <span className="text-slate-500 font-bold">{item.label}</span>
-                        </div>
-                        <span className="font-black text-slate-800">RM {item.value.toFixed(0)}</span>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="py-4">
-                        <p className="text-[11px] text-slate-400 italic">No spending data yet. Add an expense below.</p>
+                  {chartData.length > 0 ? chartData.map((item, idx) => (
+                    <div key={idx} className="flex items-center justify-between text-xs">
+                      <div className="flex items-center gap-2"><div className="w-2.5 h-2.5 rounded-full shadow-inner" style={{ backgroundColor: item.color }}></div><span className="text-slate-500 font-bold">{item.label}</span></div>
+                      <span className="font-black text-slate-800">RM {item.value.toFixed(0)}</span>
                     </div>
-                  )}
+                  )) : <div className="py-4 text-left"><p className="text-[11px] text-slate-400 italic text-left">No spending data yet. Add an expense below.</p></div>}
                 </div>
               </div>
             </div>
 
-            {/* Quick Actions */}
             <div className="grid grid-cols-2 gap-4">
-              <button 
-                onClick={() => setActiveTab('scan')}
-                className="bg-white p-5 rounded-[2rem] border border-slate-100 flex flex-col items-center gap-3 hover:bg-indigo-50 active:scale-95 transition-all shadow-sm"
-              >
-                <div className="w-12 h-12 rounded-2xl bg-indigo-100 flex items-center justify-center text-indigo-600 shadow-inner">
-                  <Camera size={24} />
-                </div>
+              <button onClick={() => setActiveTab('scan')} className="bg-white p-5 rounded-[2rem] border border-slate-100 flex flex-col items-center gap-3 hover:bg-indigo-50 active:scale-95 transition-all shadow-sm">
+                <div className="w-12 h-12 rounded-2xl bg-indigo-100 flex items-center justify-center text-indigo-600 shadow-inner"><Camera size={24} /></div>
                 <span className="text-xs font-black uppercase tracking-wider text-slate-600">Scan OCR</span>
               </button>
-              <button 
-                onClick={() => setActiveTab('utility')}
-                className="bg-white p-5 rounded-[2rem] border border-slate-100 flex flex-col items-center gap-3 hover:bg-orange-50 active:scale-95 transition-all shadow-sm"
-              >
-                <div className="w-12 h-12 rounded-2xl bg-orange-100 flex items-center justify-center text-orange-600 shadow-inner">
-                  <Zap size={24} />
-                </div>
+              <button onClick={() => setActiveTab('utility')} className="bg-white p-5 rounded-[2rem] border border-slate-100 flex flex-col items-center gap-3 hover:bg-orange-50 active:scale-95 transition-all shadow-sm">
+                <div className="w-12 h-12 rounded-2xl bg-orange-100 flex items-center justify-center text-orange-600 shadow-inner"><Zap size={24} /></div>
                 <span className="text-xs font-black uppercase tracking-wider text-slate-600">Bill Estimator</span>
               </button>
             </div>
 
-            {/* Recent History */}
             <div>
               <div className="flex justify-between items-center mb-4 px-1">
                 <h3 className="font-black text-slate-800 tracking-tight">Recent Activity</h3>
-                {transactions.length > 0 && (
-                <button 
-                    onClick={() => setShowClearConfirm(true)}
-                    className="text-[10px] font-black uppercase text-red-500 bg-red-50 px-3 py-1.5 rounded-full flex items-center gap-1.5 hover:bg-red-100 transition-colors"
-                >
-                    <Trash2 size={12} /> Clear
-                </button>
-                )}
+                {transactions.length > 0 && <button onClick={() => setShowClearConfirm(true)} className="text-[10px] font-black uppercase text-red-500 bg-red-50 px-3 py-1.5 rounded-full flex items-center gap-1.5 hover:bg-red-100 transition-colors"><Trash2 size={12} /> Clear</button>}
               </div>
               <div className="space-y-3">
-                {transactions.length > 0 ? (
-                  transactions.slice(0, 5).map(t => (
-                    <div key={t.id} className="bg-white p-4 rounded-2xl flex items-center justify-between border border-slate-100 shadow-sm animate-in slide-in-from-bottom-2">
-                      <div className="flex items-center gap-4">
-                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${t.type === 'OCR' ? 'bg-indigo-100 text-indigo-600' : 'bg-slate-100 text-slate-600'}`}>
-                          <Receipt size={20} />
-                        </div>
-                        <div>
-                          <p className="font-extrabold text-sm text-slate-800">{t.category}</p>
-                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">{t.date} • {t.type}</p>
-                        </div>
+                {transactions.length > 0 ? transactions.slice(0, 5).map(t => (
+                  <div key={t.id} className="bg-white p-4 rounded-2xl flex items-center justify-between border border-slate-100 shadow-sm">
+                    <div className="flex items-center gap-4">
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${t.type === 'OCR' ? 'bg-indigo-100 text-indigo-600' : 'bg-slate-100 text-slate-600'}`}><Receipt size={20} /></div>
+                      <div>
+                        <p className="font-extrabold text-sm text-slate-800 text-left">{t.category}</p>
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter text-left">{t.date} • {t.type}</p>
                       </div>
-                      <p className="font-black text-sm text-indigo-600">RM {t.amount.toFixed(2)}</p>
                     </div>
-                  ))
-                ) : (
-                  <div className="bg-white p-12 rounded-[2rem] border border-dashed border-slate-200 text-center">
-                    <div className="bg-slate-50 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <Receipt size={20} className="text-slate-300" />
-                    </div>
-                    <p className="text-slate-400 text-xs font-medium">Your expense list is empty.</p>
+                    <p className="font-black text-sm text-indigo-600">RM {t.amount.toFixed(2)}</p>
                   </div>
-                )}
+                )) : <div className="bg-white p-12 rounded-[2rem] border border-dashed border-slate-200 text-center"><div className="bg-slate-50 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3"><Receipt size={20} className="text-slate-300" /></div><p className="text-slate-400 text-xs font-medium">Your expense list is empty.</p></div>}
               </div>
             </div>
           </div>
         )}
 
         {activeTab === 'history' && (
-          <div className="space-y-6 animate-in slide-in-from-right duration-300">
+          <div className="space-y-6">
             <div className="flex items-center gap-4">
-              <button onClick={() => setActiveTab('dashboard')} className="p-2.5 bg-white rounded-xl border border-slate-100 shadow-sm text-slate-400 active:scale-90 transition-transform">
-                <ArrowLeft size={20} />
-              </button>
+              <button onClick={() => setActiveTab('dashboard')} className="p-2.5 bg-white rounded-xl border border-slate-100 shadow-sm text-slate-400"><ArrowLeft size={20} /></button>
               <h2 className="text-xl font-black tracking-tight text-slate-800 uppercase">Statement</h2>
             </div>
             <div className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm">
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Monthly Spending</p>
-                <h4 className="text-3xl font-black text-indigo-600 tracking-tight">RM {totalSpent.toFixed(2)}</h4>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 text-left">Total Monthly Spending</p>
+                <h4 className="text-3xl font-black text-indigo-600 tracking-tight text-left">RM {totalSpent.toFixed(2)}</h4>
             </div>
             <div className="space-y-3">
               {transactions.map(t => (
                 <div key={t.id} className="bg-white p-4 rounded-2xl flex items-center justify-between border border-slate-100">
                   <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center">
-                      <Receipt size={20} />
-                    </div>
-                    <div>
-                      <p className="font-extrabold text-sm">{t.category}</p>
-                      <p className="text-[10px] font-bold text-slate-400 uppercase">{t.date} • {t.type}</p>
-                    </div>
+                    <div className="w-10 h-10 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center"><Receipt size={20} /></div>
+                    <div><p className="font-extrabold text-sm text-left">{t.category}</p><p className="text-[10px] font-bold text-slate-400 uppercase text-left">{t.date} • {t.type}</p></div>
                   </div>
                   <p className="font-black text-sm">RM {t.amount.toFixed(2)}</p>
                 </div>
@@ -325,27 +247,14 @@ export default function App() {
         )}
 
         {activeTab === 'scan' && (
-          <div className="space-y-6 animate-in slide-in-from-right duration-300">
-             <div className="flex items-center gap-4">
-              <button onClick={() => setActiveTab('dashboard')} className="p-2.5 bg-white rounded-xl border border-slate-100 shadow-sm text-slate-400 active:scale-90 transition-transform">
-                <ArrowLeft size={20} />
-              </button>
-              <h2 className="text-xl font-black tracking-tight text-slate-800 uppercase">Scanner</h2>
-            </div>
-            
+          <div className="space-y-6">
+             <div className="flex items-center gap-4"><button onClick={() => setActiveTab('dashboard')} className="p-2.5 bg-white rounded-xl border border-slate-100 shadow-sm text-slate-400"><ArrowLeft size={20} /></button><h2 className="text-xl font-black tracking-tight text-slate-800 uppercase">Scanner</h2></div>
             {scanStep === 0 && (
-              <div className="bg-slate-200 aspect-[3/4] rounded-[2.5rem] flex flex-col items-center justify-center border-4 border-dashed border-slate-300 group overflow-hidden relative">
-                <Camera size={56} className="text-slate-400 mb-4 group-hover:scale-110 transition-transform" />
-                <p className="text-slate-500 text-center px-10 text-sm font-medium">Position your receipt within the camera guidelines.</p>
-                <button 
-                  onClick={handleStartScan}
-                  className="mt-8 bg-indigo-600 text-white px-10 py-4 rounded-full font-black uppercase tracking-widest shadow-xl shadow-indigo-200 active:scale-95 transition-transform"
-                >
-                  Capture
-                </button>
+              <div className="bg-slate-200 aspect-[3/4] rounded-[2.5rem] flex flex-col items-center justify-center border-4 border-dashed border-slate-300 relative">
+                <Camera size={56} className="text-slate-400 mb-4" /><p className="text-slate-500 text-center px-10 text-sm font-medium">Position your receipt within the camera guidelines.</p>
+                <button onClick={handleStartScan} className="mt-8 bg-indigo-600 text-white px-10 py-4 rounded-full font-black uppercase tracking-widest shadow-xl shadow-indigo-200">Capture</button>
               </div>
             )}
-
             {scanStep === 1 && (
               <div className="bg-slate-900 aspect-[3/4] rounded-[2.5rem] flex flex-col items-center justify-center relative overflow-hidden">
                 <div className="absolute inset-0 bg-indigo-500/10 animate-pulse"></div>
@@ -353,213 +262,80 @@ export default function App() {
                 <div className="z-10 text-center">
                   <div className="animate-spin rounded-full h-12 w-12 border-4 border-indigo-400/20 border-t-indigo-400 mx-auto mb-4"></div>
                   <p className="text-white font-black tracking-widest text-sm uppercase">Extracting Data...</p>
-                  <p className="text-slate-500 text-[10px] font-bold mt-2 uppercase">AI Model: Tesseract (Simulated)</p>
                 </div>
               </div>
             )}
-
             {scanStep === 2 && (
-              <div className="space-y-4 animate-in zoom-in duration-300">
-                <div className="bg-emerald-50 border border-emerald-100 p-5 rounded-3xl flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center shadow-inner">
-                    <CheckCircle2 size={24} />
-                  </div>
-                  <p className="text-emerald-800 text-sm font-black uppercase tracking-tight italic">Receipt Processed!</p>
-                </div>
-                
+              <div className="space-y-4">
+                <div className="bg-emerald-50 border border-emerald-100 p-5 rounded-3xl flex items-center gap-4"><div className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center shadow-inner"><CheckCircle2 size={24} /></div><p className="text-emerald-800 text-sm font-black uppercase tracking-tight italic">Receipt Processed!</p></div>
                 <div className="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm space-y-6">
-                  <div>
-                    <label className="text-[10px] text-slate-400 uppercase font-black tracking-widest mb-1 block">Merchant</label>
-                    <p className="text-xl font-black text-slate-800">{ocrData.merchant}</p>
-                  </div>
+                  <div><label className="text-[10px] text-slate-400 uppercase font-black tracking-widest mb-1 block text-left">Merchant</label><p className="text-xl font-black text-slate-800 text-left">{ocrData.merchant}</p></div>
                   <div className="grid grid-cols-2 gap-6">
-                    <div>
-                      <label className="text-[10px] text-slate-400 uppercase font-black tracking-widest mb-1 block">Total Amount</label>
-                      <p className="text-2xl font-black text-indigo-600 tracking-tight">RM {ocrData.amount}</p>
-                    </div>
-                    <div>
-                      <label className="text-[10px] text-slate-400 uppercase font-black tracking-widest mb-1 block">Category</label>
-                      <p className="text-xl font-black text-slate-800">{ocrData.category}</p>
-                    </div>
+                    <div><label className="text-[10px] text-slate-400 uppercase font-black tracking-widest mb-1 block text-left">Total Amount</label><p className="text-2xl font-black text-indigo-600 tracking-tight text-left">RM {ocrData.amount}</p></div>
+                    <div><label className="text-[10px] text-slate-400 uppercase font-black tracking-widest mb-1 block text-left">Category</label><p className="text-xl font-black text-slate-800 text-left">{ocrData.category}</p></div>
                   </div>
                 </div>
-
-                <div className="flex gap-4">
-                  <button onClick={() => setScanStep(0)} className="flex-1 bg-slate-200 py-4 rounded-2xl font-black text-slate-500 uppercase tracking-widest text-xs">Retry</button>
-                  <button onClick={saveOcrResult} className="flex-[2] bg-indigo-600 py-4 rounded-2xl font-black text-white shadow-xl shadow-indigo-100 uppercase tracking-widest text-xs">Confirm</button>
-                </div>
+                <div className="flex gap-4"><button onClick={() => setScanStep(0)} className="flex-1 bg-slate-200 py-4 rounded-2xl font-black text-slate-500 uppercase tracking-widest text-xs">Retry</button><button onClick={saveOcrResult} className="flex-[2] bg-indigo-600 py-4 rounded-2xl font-black text-white shadow-xl shadow-indigo-100 uppercase tracking-widest text-xs">Confirm</button></div>
               </div>
             )}
           </div>
         )}
 
         {activeTab === 'utility' && (
-          <div className="space-y-6 animate-in slide-in-from-right duration-300">
-            <div className="flex items-center gap-4">
-              <button onClick={() => setActiveTab('dashboard')} className="p-2.5 bg-white rounded-xl border border-slate-100 shadow-sm text-slate-400 active:scale-90 transition-transform">
-                <ArrowLeft size={20} />
-              </button>
-              <h2 className="text-xl font-black tracking-tight text-slate-800 uppercase italic">Utility Estimator</h2>
-            </div>
-            
+          <div className="space-y-6">
+            <div className="flex items-center gap-4"><button onClick={() => setActiveTab('dashboard')} className="p-2.5 bg-white rounded-xl border border-slate-100 shadow-sm text-slate-400"><ArrowLeft size={20} /></button><h2 className="text-xl font-black tracking-tight text-slate-800 uppercase italic">Utility Estimator</h2></div>
             <div className="bg-white p-8 rounded-[2rem] border border-slate-100 space-y-7 shadow-sm">
-              <div>
-                <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-4">
-                  Meter Consumption (kWh)
-                </label>
-                <input 
-                  type="number" 
-                  value={usage}
-                  onChange={(e) => calculateBill(e.target.value)}
-                  placeholder="e.g. 350"
-                  className="w-full px-6 py-5 rounded-2xl border-2 border-slate-50 focus:border-orange-400 bg-slate-50 outline-none text-3xl font-black tracking-tight transition-colors"
-                />
+              <div><label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-4 text-left">Meter Consumption (kWh)</label>
+                <input type="number" value={usage} onChange={(e) => calculateBill(e.target.value)} placeholder="e.g. 350" className="w-full px-6 py-5 rounded-2xl border-2 border-slate-50 focus:border-orange-400 bg-slate-50 outline-none text-3xl font-black tracking-tight" />
               </div>
-
               <div className="bg-orange-600 p-6 rounded-3xl text-white shadow-xl shadow-orange-100 relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-3 opacity-20">
-                    <Zap size={60} />
-                </div>
-                <div className="flex justify-between items-center mb-1">
-                  <span className="text-orange-100 text-[10px] font-black uppercase tracking-widest">SESCO Estimation</span>
-                  <span className="bg-white/20 text-[8px] font-bold px-2 py-0.5 rounded-full uppercase tracking-widest">Standard Tariff</span>
-                </div>
-                <p className="text-4xl font-black tracking-tighter">RM {estimate}</p>
-              </div>
-
-              <div className="space-y-2 border-t border-slate-50 pt-6">
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Sarawak Rate Structure</p>
-                <div className="text-[10px] space-y-1 font-bold text-slate-500 uppercase tracking-tight">
-                  <div className="flex justify-between"><span>0 - 100 kWh</span><span>RM 0.265 / unit</span></div>
-                  <div className="flex justify-between"><span>101 - 300 kWh</span><span>RM 0.334 / unit</span></div>
-                  <div className="flex justify-between"><span>Above 300 kWh</span><span>RM 0.445 / unit</span></div>
-                </div>
+                <div className="absolute top-0 right-0 p-3 opacity-20"><Zap size={60} /></div>
+                <div className="flex justify-between items-center mb-1"><span className="text-orange-100 text-[10px] font-black uppercase tracking-widest">SESCO Estimation</span><span className="bg-white/20 text-[8px] font-bold px-2 py-0.5 rounded-full uppercase tracking-widest">Standard Tariff</span></div>
+                <p className="text-4xl font-black tracking-tighter text-left">RM {estimate}</p>
               </div>
             </div>
-
             {parseFloat(estimate) > 100 && (
-              <div className="bg-red-50 p-5 rounded-[2rem] border border-red-100 flex gap-4 animate-in shake duration-500">
-                <AlertCircle className="text-red-500 shrink-0" />
-                <p className="text-[11px] text-red-800 font-black uppercase leading-relaxed">
-                  Budget Warning: Estimated bill **RM {estimate}** exceeds the RM 100.00 threshold.
-                </p>
-              </div>
+              <div className="bg-red-50 p-5 rounded-[2rem] border border-red-100 flex gap-4"><AlertCircle className="text-red-500 shrink-0" /><p className="text-[11px] text-red-800 font-black uppercase leading-relaxed text-left">Budget Warning: Estimated bill **RM {estimate}** exceeds threshold.</p></div>
             )}
           </div>
         )}
       </main>
 
-      {/* Manual Entry Modal */}
       {showManualModal && (
-        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-4 animate-in fade-in duration-200">
-          <div className="bg-white w-full max-w-sm rounded-[2.5rem] shadow-2xl overflow-hidden animate-in slide-in-from-bottom duration-300">
-            <div className="flex justify-between items-center p-7 border-b border-slate-50">
-              <h3 className="text-lg font-black uppercase text-slate-800 tracking-tight">New Entry</h3>
-              <button onClick={() => setShowManualModal(false)} className="p-2 hover:bg-slate-100 rounded-full text-slate-400">
-                <X size={20} />
-              </button>
-            </div>
-            
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-4">
+          <div className="bg-white w-full max-w-sm rounded-[2.5rem] shadow-2xl overflow-hidden">
+            <div className="flex justify-between items-center p-7 border-b border-slate-50"><h3 className="text-lg font-black uppercase text-slate-800 tracking-tight">New Entry</h3><button onClick={() => setShowManualModal(false)} className="p-2 hover:bg-slate-100 rounded-full text-slate-400"><X size={20} /></button></div>
             <form onSubmit={handleSaveManual} className="p-7 space-y-6">
-              <div>
-                <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Amount (RM)</label>
-                <input 
-                  autoFocus
-                  type="number" 
-                  step="0.01"
-                  value={manualAmount}
-                  onChange={(e) => setManualAmount(e.target.value)}
-                  placeholder="0.00"
-                  className="w-full text-4xl font-black border-b-4 border-slate-50 focus:border-indigo-600 outline-none pb-2 transition-colors tracking-tight"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Select Category</label>
+              <div><label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 text-left">Amount (RM)</label><input autoFocus type="number" step="0.01" value={manualAmount} onChange={(e) => setManualAmount(e.target.value)} placeholder="0.00" className="w-full text-4xl font-black border-b-4 border-slate-50 focus:border-indigo-600 outline-none pb-2 tracking-tight" required /></div>
+              <div><label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 text-left text-left">Select Category</label>
                 <div className="grid grid-cols-2 gap-3">
                   {['Food', 'Transport', 'Utility', 'Other'].map(cat => (
-                    <button
-                      key={cat}
-                      type="button"
-                      onClick={() => setManualCategory(cat)}
-                      className={`py-4 rounded-2xl border-2 text-[10px] font-black uppercase tracking-widest transition-all ${
-                        manualCategory === cat 
-                        ? 'bg-indigo-600 border-indigo-600 text-white shadow-lg shadow-indigo-100' 
-                        : 'bg-white border-slate-100 text-slate-500 hover:border-indigo-200'
-                      }`}
-                    >
-                      {cat}
-                    </button>
+                    <button key={cat} type="button" onClick={() => setManualCategory(cat)} className={`py-4 rounded-2xl border-2 text-[10px] font-black uppercase tracking-widest transition-all ${manualCategory === cat ? 'bg-indigo-600 border-indigo-600 text-white shadow-lg' : 'bg-white border-slate-100 text-slate-500 hover:border-indigo-200'}`}>{cat}</button>
                   ))}
                 </div>
               </div>
-
-              <div className="pt-4">
-                <button type="submit" className="w-full bg-indigo-600 text-white py-5 rounded-[1.5rem] font-black uppercase tracking-widest text-xs shadow-xl shadow-indigo-100 active:scale-95 transition-all">
-                  Log Expense
-                </button>
-              </div>
+              <div className="pt-4"><button type="submit" className="w-full bg-indigo-600 text-white py-5 rounded-[1.5rem] font-black uppercase tracking-widest text-xs shadow-xl shadow-indigo-100">Log Expense</button></div>
             </form>
           </div>
         </div>
       )}
 
-      {/* Clear Confirmation Modal */}
       {showClearConfirm && (
-        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-md z-50 flex items-center justify-center p-6 animate-in fade-in duration-200">
-          <div className="bg-white w-full max-w-xs rounded-[2.5rem] shadow-2xl p-8 text-center animate-in zoom-in duration-300">
-            <div className="w-16 h-16 bg-red-100 text-red-600 rounded-[1.5rem] flex items-center justify-center mx-auto mb-5 shadow-inner">
-              <TriangleAlert size={32} />
-            </div>
-            <h3 className="text-xl font-black mb-2 text-slate-800 uppercase tracking-tight italic">Reset Data?</h3>
-            <p className="text-xs text-slate-400 font-bold uppercase mb-8 leading-relaxed">This will delete all current history. Proceed?</p>
-            <div className="flex flex-col gap-3">
-              <button onClick={clearAllTransactions} className="w-full bg-red-500 text-white py-4 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-lg shadow-red-100">Clear All</button>
-              <button onClick={() => setShowClearConfirm(false)} className="w-full bg-slate-100 text-slate-500 py-4 rounded-2xl font-black uppercase tracking-widest text-[10px]">Cancel</button>
-            </div>
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-md z-50 flex items-center justify-center p-6">
+          <div className="bg-white w-full max-w-xs rounded-[2.5rem] shadow-2xl p-8 text-center">
+            <div className="w-16 h-16 bg-red-100 text-red-600 rounded-[1.5rem] flex items-center justify-center mx-auto mb-5 shadow-inner"><TriangleAlert size={32} /></div>
+            <h3 className="text-xl font-black mb-2 text-slate-800 uppercase tracking-tight italic">Reset Data?</h3><p className="text-xs text-slate-400 font-bold uppercase mb-8 leading-relaxed">This will delete all current history. Proceed?</p>
+            <div className="flex flex-col gap-3"><button onClick={clearAllTransactions} className="w-full bg-red-500 text-white py-4 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-lg shadow-red-100">Clear All</button><button onClick={() => setShowClearConfirm(false)} className="w-full bg-slate-100 text-slate-500 py-4 rounded-2xl font-black uppercase tracking-widest text-[10px]">Cancel</button></div>
           </div>
         </div>
       )}
 
-      {/* Bottom Navigation */}
       <nav className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-lg border-t border-slate-100 px-6 pt-3 pb-8 flex justify-between items-center z-20">
-        <button 
-          onClick={() => setActiveTab('dashboard')}
-          className={`flex flex-col items-center gap-1.5 ${activeTab === 'dashboard' || activeTab === 'history' ? 'text-indigo-600' : 'text-slate-400'} transition-colors`}
-        >
-          <LayoutDashboard size={22} strokeWidth={activeTab === 'dashboard' ? 2.5 : 2} />
-          <span className="text-[9px] font-black uppercase tracking-widest">Overview</span>
-        </button>
-        <button 
-          onClick={() => setActiveTab('scan')}
-          className={`flex flex-col items-center gap-1.5 ${activeTab === 'scan' ? 'text-indigo-600' : 'text-slate-400'} transition-colors`}
-        >
-          <Camera size={22} strokeWidth={activeTab === 'scan' ? 2.5 : 2} />
-          <span className="text-[9px] font-black uppercase tracking-widest">OCR</span>
-        </button>
-        
-        <div className="relative -top-8 flex flex-col items-center group">
-          <button 
-            onClick={() => setShowManualModal(true)}
-            className="bg-indigo-600 text-white w-14 h-14 rounded-full flex items-center justify-center shadow-2xl shadow-indigo-200 border-4 border-white active:scale-90 transition-transform mb-1.5 group-hover:bg-indigo-700"
-          >
-            <Plus size={32} />
-          </button>
-          <span className="text-[9px] font-black text-indigo-600 uppercase tracking-widest">Manual</span>
-        </div>
-
-        <button 
-          onClick={() => setActiveTab('utility')}
-          className={`flex flex-col items-center gap-1.5 ${activeTab === 'utility' ? 'text-indigo-600' : 'text-slate-400'} transition-colors`}
-        >
-          <Zap size={22} strokeWidth={activeTab === 'utility' ? 2.5 : 2} />
-          <span className="text-[9px] font-black uppercase tracking-widest">Utility</span>
-        </button>
-        <button className="flex flex-col items-center gap-1.5 text-slate-300">
-          <Settings size={22} />
-          <span className="text-[9px] font-black uppercase tracking-widest">Setup</span>
-        </button>
+        <button onClick={() => setActiveTab('dashboard')} className={`flex flex-col items-center gap-1.5 ${activeTab === 'dashboard' || activeTab === 'history' ? 'text-indigo-600' : 'text-slate-400'}`}><LayoutDashboard size={22} /><span className="text-[9px] font-black uppercase tracking-widest">Overview</span></button>
+        <button onClick={() => setActiveTab('scan')} className={`flex flex-col items-center gap-1.5 ${activeTab === 'scan' ? 'text-indigo-600' : 'text-slate-400'}`}><Camera size={22} /><span className="text-[9px] font-black uppercase tracking-widest">OCR</span></button>
+        <div className="relative -top-8 flex flex-col items-center group"><button onClick={() => setShowManualModal(true)} className="bg-indigo-600 text-white w-14 h-14 rounded-full flex items-center justify-center shadow-2xl shadow-indigo-200 border-4 border-white active:scale-90 transition-transform mb-1.5"><Plus size={32} /></button><span className="text-[9px] font-black text-indigo-600 uppercase tracking-widest">Manual</span></div>
+        <button onClick={() => setActiveTab('utility')} className={`flex flex-col items-center gap-1.5 ${activeTab === 'utility' ? 'text-indigo-600' : 'text-slate-400'}`}><Zap size={22} /><span className="text-[9px] font-black uppercase tracking-widest">Utility</span></button>
+        <button className="flex flex-col items-center gap-1.5 text-slate-300"><Settings size={22} /><span className="text-[9px] font-black uppercase tracking-widest">Setup</span></button>
       </nav>
     </div>
   );
